@@ -1,0 +1,134 @@
+/* Wrapper for both editor and text */
+.editor-wrapper {
+    display: flex; /* Horizontal layout */
+    height: 100vh; /* Full viewport height */
+    /* Matches dark theme background */
+     /* Text color for the right side */
+    border: 1px solid white;
+  }
+  
+  /* Monaco Editor Container (Left) */
+  .editor-container {
+    flex: 1; /* Occupies equal width */
+    height: 100%; /* Matches full height of the wrapper */
+    padding: 20px;
+     /* Matches the output background */
+    border-right: 1px solid white; /* Divider between editor and text */
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .section-title {
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+    color: white;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 10px;
+  }
+  
+  .language-label {
+    font-size: 1rem;
+    color: white;
+  }
+  
+  .language-value {
+    font-size: 1rem;
+    color: var(--primaryColor); /* Green for the language text */
+    font-weight: bold;
+  }
+  
+  /* Text Container (Right) */
+  .text-container {
+    flex: 1; /* Occupies equal width */
+    height: 100%; /* Matches full height of the wrapper */
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid white; 
+  }
+  
+  .output-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+  }
+  
+  .output-header {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .run-button {
+    padding: 10px 20px;
+    background-color: var(--primaryColor);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  
+  .run-button:hover {
+    background-color: #2e7c67;
+  }
+  
+  .output-area {
+    padding: 15px;
+    background-color: transparent; /* Transparent background */
+    border: 1px solid rgba(255, 255, 255, 0.178); /* White outline */
+    border-radius: 5px; /* Rounded corners */
+    color: white;
+    
+    font-size: 1rem;
+    min-height: 85%;
+    display: flex;
+    background-color: #1c1c24;
+  }
+
+  .error-message {
+    color: red !important; /* Force red text */
+    font-weight: bold;
+    border: 2px solid red; /* Strong red border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px; /* Space inside the message box */
+    background-color: rgba(255, 0, 0, 0.2); /* Light red background */
+    width: 100%; /* Ensures it takes full width */
+    text-align: center;
+    
+}
+.lesson-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+  background-color: hsl(310, 12%, 97%); /* Transparent background */
+  border: 1px solid black; /* White outline */
+  border-radius: 5px; /* Rounded corners */
+  color: var(--clr-primary); /* White text */
+  font-size: 1rem;
+  min-height: 85%;
+  margin-top: 25px;
+  margin-bottom: 60px;
+  
+}
+
+
+.lesson-content {
+  display: flex;
+  flex-direction: column;
+  gap: 5px; /* Add spacing between lines */
+}
+
+.lesson-line {
+  margin-bottom: 5px;
+}
+  

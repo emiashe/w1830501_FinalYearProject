@@ -1,0 +1,31 @@
+/* Blog Content Container */
+.blog-content-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Space between blog boxes */
+    max-width: 800px;
+    width: 100%;
+    margin-top: 20px;
+    background-color: #f4f8fa; /* Matches page-container background */
+  }
+  
+  /* Individual Blog Box */
+  .blog-box {
+    background-color: #fff; /* White box */
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: left;
+  }
+  
+  .blog-box h3 {
+    font-size: 20px;
+    color: #2d3748; /* Dark gray */
+    margin-bottom: 10px;
+  }
+  
+  .blog-box p {
+    font-size: 16px;
+    color: #4a5568; /* Medium gray */
+    line-height: 1.6;
+  }

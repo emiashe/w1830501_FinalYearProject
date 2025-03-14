@@ -1,0 +1,210 @@
+.page-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background-color: #f4f8fa; /* Light blue background */
+    min-height: 100vh;
+    max-width: 1000px; /* Set the desired maximum width */
+    margin: 0 auto; 
+  }
+  
+  /* Title for the page */
+  .page-title {
+    font-size: 36px;
+    font-weight: bold;
+    color: #2d3748; /* Dark gray */
+    margin-bottom: 20px;
+  }
+
+  /* Subtitle for the page */
+.page-subtitle {
+    font-size: 18px;
+    font-weight: normal;
+    color: #4a5568; /* Medium gray */
+    text-align: left;
+    margin-top: 20px;
+    margin-bottom: 40px;
+    max-width: 800px;
+    /* Ensure the text doesn't stretch too wide */
+  }
+    /* New box: About this course and Skills you'll gain */
+.course-details-container {
+    display: flex;
+    justify-content: space-between;
+    max-width: 800px;
+    background: #fff;
+    padding: 20px;
+    margin-top: 17px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* About this course section */
+  .about-course {
+    flex: 1;
+    margin-right: 20px;
+  }
+  
+  .about-course h3 {
+    font-size: 20px;
+    font-weight: bold;
+    color: #2d3748;
+    margin-bottom: 10px;
+  }
+  
+  .about-course p {
+    font-size: 16px;
+    color: #4a5568;
+    line-height: 1.5;
+  }
+  
+  /* Skills you'll gain section */
+  .skills-gain {
+    flex: 1;
+  }
+  
+  .skills-gain h3 {
+    font-size: 20px;
+    font-weight: bold;
+    color: #2d3748;
+    margin-bottom: 10px;
+  }
+  
+  .skills-gain ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .skills-gain li {
+    font-size: 16px;
+    color: #4a5568;
+    margin-bottom: 10px;
+  }
+  
+  .course-preview-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 20px;
+    margin-top: 60px;
+  }
+  
+  .course-preview-content {
+    max-width: 600px;
+    width: 100%;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .course-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #2d3748;
+  }
+  
+  .course-description {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 20px;
+    color: #4a5568; /* Medium gray */
+  }
+  
+  .course-sections {
+    margin-bottom: 20px;
+  }
+  
+  .section-item {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+    
+  }
+  
+  .section-item:last-child {
+    border-bottom: none;
+  }
+  
+  .section-icon {
+    margin-right: 10px;
+    font-size: 20px;
+  }
+  
+  .section-text {
+    font-size: 16px;
+    color: #2d3748;
+  }
+  
+  .start-button-container {
+    margin-top: 20px;
+  }
+  
+  .start-button {
+    display: inline-block;
+    text-decoration: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #4a90e2;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .start-button:hover {
+    background-color: #357abf;
+  }
+
+  /* Course Modules Container */
+.course-modules-container {
+    width: 100%;
+    max-width: 800px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-top: 40px;
+    margin-bottom: 40px;
+  }
+  
+  .modules-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #2d3748;
+    margin-bottom: 20px;
+  }
+  
+  .modules-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .modules-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #e2e8f0; /* Light gray divider */
+  }
+  
+  .modules-list li:last-child {
+    border-bottom: none;
+  }
+  
+  .module-name {
+    font-size: 16px;
+    font-weight: bold;
+    color: #2d3748; /* Dark gray */
+  }
+  
+  .module-details {
+    font-size: 14px;
+    color: #718096; /* Medium gray */
+  }
