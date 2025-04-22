@@ -1,45 +1,135 @@
-import React from 'react';
-import './CodeEditor.css';
+import React, { useEffect, useState, useRef } from 'react';
+import { useParams } from 'react-router-dom';
+import useAxiosPrivate from '../../../Hooks/useAxiosPrivate';
+import Output from '../CodeEditor/Output'
+import './Lesson.css';
+import { Editor } from "@monaco-editor/react";
+import ContentTop from '../../Dashboard/ContentTop/ContentTop'
+import LessonQuiz from './LessonQuiz'
+
+// import QuizComponent from '../Quiz/QuizComponent'; // for future
 
 const Lesson = () => {
-    const lessonContent = `
-        JavaScript - Introduction
+    const { sectionId } = useParams();
+    const [section, setSection] = useState(null);
+    const [error, setError] = useState(null);
+    const axiosPrivate = useAxiosPrivate();
+    const editorRef = useRef(null);
+    const [value, setValue] = useState('')
+    const [lesson, setLesson] = useState(null);
+    
 
-        A function in JavaScript is a reusable block of code designed to perform a specific task.
-        Functions allow us to avoid repetition and make code modular.
+    useEffect(() => {
+        const fetchSection = async () => {
+            try {
+                const response = await axiosPrivate.get(`/courses/sections/${sectionId}`);
+                setSection(response.data);
+                
+            } catch (err) {
+                console.error('Error fetching section:', err);
+                setError('Failed to load lesson.');
+            }
+        };
 
-        Function Definition:
-        function greet(name) {
-            console.log("Hello, " + name + "!");
-        }
+        fetchSection();
+    }, [sectionId]);
 
-        Explanation:
-        - 'function' is the keyword that defines a function.
-        - 'greet' is the function name.
-        - '(name)' is the parameter, which acts as a placeholder for values.
-        - 'console.log' prints the message to the console.
+      // Fetch lesson once section is available
+  useEffect(() => {
+    const fetchLesson = async () => {
+      if (!section?.lesson_id) return;
 
-        Function Call:
-        greet("Emina");
+      try {
+        const response = await axiosPrivate.get(`/lessons/${section.lesson_id}`);
+        setLesson(response.data);
+      } catch (err) {
+        console.error('Error fetching lesson:', err);
+        setError('Failed to load lesson content.');
+      }
+    };
 
-        - Here, "Emina" is passed as an argument to the function.
-        - The output will be: Hello, Emina!
-        
-        You can call the function with different names to personalize the greeting!
-    `;
+    fetchLesson();
+  }, [section]);
+
+  useEffect(() => {
+    if (section) {
+      console.log("Section:", section); // <== Check if course_id is there
+    }
+  }, [section]);
+  
+
+
+
+    const onMount = (editor) => {
+      editorRef.current = editor;
+      editor.focus();
+      }
+  
+    
+      if (error) return <div>{error}</div>;
+      if (!section || !lesson) return <div>Loading...</div>;
 
     return (
-        <div className="lesson-wrapper">
+        section.type === 'code' ? (
+          <div className='main-content'>
+            
+            <ContentTop />
+        <div className="editor-wrapper">
 
-            <div className="lesson-content">
-                {lessonContent.split('\n').map((line, index) => (
-                    <div key={index} className="lesson-line">
-                        {line.trim()}
-                    </div>
-                ))}
-            </div>
+<div className="text-container">
+          <h2 className="section-title">Lesson:</h2>
+          <div className="lesson-wrapper">
+                  <div className="lesson-content">
+                  {(lesson.content || '').split('\n').map((line, index) => (
+  <div key={index} className="lesson-line">
+    {line.trim()}
+  </div>
+))}
+                  </div>
+                </div>
+        
         </div>
-    );
-};
+        {/* Left side: Monaco Editor */}
+        <div className="editor-container">
+          <h2 className="section-title">Editor:</h2>
+          <div className="header">
+            <p className="language-label">Language:</p>
+            <p className="language-value">JavaScript</p>
+          </div>
+          <Editor
+            height="85%"
+            theme="vs-dark"
+            language="javascript"
+            defaultValue= {lesson.starter_code}
+            onMount={onMount}
+            value={value}
+            onChange={(value) => setValue(value)}
+          />
+        </div>
+  
+        {/* Right side: Output */}
+        <div className="text-container">
+          <h2 className="section-title">Output:</h2>
+          
+  <Output
+    editorRef={editorRef}
+    expectedOutput={lesson.expected_output}
+    courseId={section.course_id}
+  />
 
+          
+        </div>
+        </div>
+        </div>
+
+        ) : section.type === 'quiz' ? (
+    <LessonQuiz sectionId={sectionId} />
+  ) : (
+    <div>Unsupported lesson type</div>
+  )
+      );
+
+    }
+
+    
 export default Lesson;

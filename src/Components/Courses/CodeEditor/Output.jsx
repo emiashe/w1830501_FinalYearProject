@@ -1,65 +1,95 @@
-import React, {useRef, useState} from 'react';
-import { executeCode } from '../../../api'
-import './CodeEditor.css'
+import React, { useState } from 'react';
+import { executeCode } from '../../../api';
+import useAxiosPrivate from '../../../Hooks/useAxiosPrivate';
+import { useNavigate, useParams } from 'react-router-dom';
+import './Lesson.css';
 
+const Output = ({ editorRef, expectedOutput = null, courseId }) => {
+  console.log("Output received courseId:", courseId);
+  const [output, setOutput] = useState(null);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
+  const axiosPrivate = useAxiosPrivate();
+  const navigate = useNavigate();
+  const { sectionId } = useParams();
+  
 
-const Output = ({editorRef}) => {
+  const runCode = async () => {
+    const sourceCode = editorRef.current.getValue();
+    if (!sourceCode) return;
 
-    const [output, setOutput] = useState(null); // Stores the output
-    const [error, setError] = useState(null); // Stores error messages
     
+    try {
 
+      const { run: result } = await executeCode(sourceCode);
+      const cleanedOutput = result.output?.trim() || '';
+      setOutput(cleanedOutput);
+      setError(null);
 
+      if (expectedOutput?.trim() === cleanedOutput) {
+        setSuccess(true);
 
-    const runCode = async () => {
-
-        const sourceCode = editorRef.current.getValue();
-        if (!sourceCode) return;
-        
-        try {
-            const {run:result} = await executeCode(sourceCode);
-            setOutput(result.output)
-            setError(null); 
- 
-        } catch (err) {
-            setOutput(null); // Clear output
-            setError(
-                err.run?.stderr || err.message || "An unexpected error occurred."
-              ); // Extract and set the error message   
-
-        } 
-            
-
-
+        // ✅ Mark progress as complete
+        await axiosPrivate.post('/progress/complete', {
+          sectionId: parseInt(sectionId),
+        });
+      } else {
+        setSuccess(false);
+      }
+    } catch (err) {
+      setOutput(null);
+      setError(err.run?.stderr || err.message || 'An unexpected error occurred.');
+      setSuccess(false);
     }
+  };
 
+  const handleNext = () => {
+    if (!courseId) {
+      alert('Missing course ID. Please try again later.');
+      return;
+    }
+  
+    // ✅ Go to the course preview where everything works
+    navigate(`/coursepreview/${courseId}`);
+  };
 
-    return (
-        <div className="output-wrapper">
-      <div className="output-header">
-        <button className="run-button" type="submit" onClick={runCode}>
-          Run Code
-        </button>
+return (
+  <div className="output-wrapper">
+<div className="output-header">
+  <button className="run-button" type="submit" onClick={runCode}>
+    Run Code
+  </button>
+</div>
+<div className="output-area">
+  {error ? (
+    <div className="error-message">
+      <strong>Error:</strong> {error}
+    </div>
+  ) : (
+
+    <div>
+      {output
+                      ? output.split('\n').map((line, index) => (
+                            <div key={index}>{line}</div>
+                        ))
+                      : "Click 'Run Code' to see output here."}
       </div>
-      <div className="output-area">
-        {error ? (
-          <div className="error-message">
-            <strong>Error:</strong> {error}
-          </div>
-        ) : (
-
-          <div>
-            {output
-                            ? output.split('\n').map((line, index) => (
-                                  <div key={index}>{line}</div>
-                              ))
-                            : "Click 'Run Code' to see output here."}
-            </div>
-        )}
-      </div>
+  )}
+</div>
+{success && (
+        <div className="success-box">
+          <p className="success-text">✅ Success in the lesson!</p>
+          <button className="next-button" onClick={handleNext}>
+            Next Lesson
+          </button>
+        </div>
+      )}
     </div>
 
-    )
+
+)
 }
+
+ 
 
 export default Output;

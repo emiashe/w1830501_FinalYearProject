@@ -1,34 +1,99 @@
-import './Projects.css'
-import { projectsData } from './../../../../Data/Data'
+import { useEffect, useRef, useState } from 'react';
+import './Projects.css';
+import useAxiosPrivate from '../../../../../Hooks/useAxiosPrivate';
+import { useNavigate } from 'react-router-dom';
 
-const  Projects = () => {
+const Projects = () => {
+  const [courses, setCourses] = useState([]);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const axiosPrivate = useAxiosPrivate();
+  const scrollRef = useRef(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await axiosPrivate.get('/courses');
+        setCourses(response.data);
+      } catch (err) {
+        console.error("Failed to fetch courses:", err);
+      }
+    };
+
+    fetchCourses();
+  }, []);
+
+  useEffect(() => {
+    const scrollEl = scrollRef.current;
+    const checkScroll = () => {
+      if (!scrollEl) return;
+      setCanScrollLeft(scrollEl.scrollLeft > 0);
+      setCanScrollRight(scrollEl.scrollLeft + scrollEl.offsetWidth < scrollEl.scrollWidth);
+    };
+
+    if (scrollEl) {
+      checkScroll();
+      scrollEl.addEventListener('scroll', checkScroll);
+      return () => scrollEl.removeEventListener('scroll', checkScroll);
+    }
+  }, [courses]);
+
+  const scrollLeft = () => {
+    scrollRef.current.scrollBy({ left: -300, behavior: 'smooth' });
+  };
+
+  const scrollRight = () => {
+    scrollRef.current.scrollBy({ left: 300, behavior: 'smooth' });
+  };
+
   return (
-    <div>
-      <ul className="project-list">
-        {projectsData.map((project, index) => (
-          <li className="grid-one-item grid-common grid-c1" key={index}>
-            <span className="grid-c-title">
-              <h3 className="grid-c-title-text">Module: {project.module}</h3>
-            </span>
-            <p className="text text-sm text-white">Current lesson: {project.module}</p>
-            <span className="grid-c1-content">
-              <p>{project.level}</p>
-              <span className="lg-value">{project.title}</span>
-              <span className="card-wrapper">
-                <span className="card-pin-hidden">{project.description}</span>
+    <>
+      <div className="section-heading-wrapper">
+        <h2 className="section-heading">Your Courses:</h2>
+        <div className="scroll-controls">
+          {canScrollLeft && (
+            <button className="scroll-btn heading-left" onClick={scrollLeft}>←</button>
+          )}
+          {canScrollRight && (
+            <button className="scroll-btn heading-right" onClick={scrollRight}>→</button>
+          )}
+        </div>
+      </div>
+
+      <div className="scroll-container" ref={scrollRef}>
+        <ul className="project-list">
+          {courses.map((course, index) => (
+            <li 
+              key={index}
+              onClick={() => navigate(`/coursepreview/${course.id}`)}
+              className="grid-one-item grid-common grid-c1"
+              style={{ cursor: 'pointer' }}
+            >
+              <span className="grid-c-title">
+                <h3 className="grid-c-title-text">Module: {course.module}</h3>
               </span>
-              <span className="card-logo-wrapper">
-                <span>
-                  <p className="text text-silver-v1 expiry-text">----</p>
-                  <p className="text text-sm text-white">Includes {project.modulesCount} modules</p>
+              <p className="text text-sm text-white">Current lesson: {course.module}</p>
+              <span className="grid-c1-content">
+                <p>{course.level}</p>
+                <span className="lg-value">{course.title}</span>
+                <span className="card-wrapper">
+                  <span className="card-pin-hidden">{course.description}</span>
+                </span>
+                <span className="card-logo-wrapper">
+                  <span>
+                    <p className="text text-silver-v1 expiry-text">----</p>
+                    <p className="text text-sm text-white">Includes {course.modulesCount} modules</p>
+                  </span>
                 </span>
               </span>
-            </span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  )
-}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </>
+  );
+};
 
-export default Projects
+export default Projects;

@@ -1,8 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React, {useRef, useEffect, useState} from 'react';
 import './Login.css'
 import '../../App.css'
-import {Link, useNavigate} from 'react-router-dom'
-import Axios from 'axios'
+import {Link, useNavigate, useLocation} from 'react-router-dom'
+import axios from '../../axios';
+
+import useAuth from '../../Hooks/useAuth'
 
 //import assets
 import logo from '../../LoginAssets/logo.png'
@@ -12,60 +14,103 @@ import { FaUserShield } from "react-icons/fa";
 import { BsFillShieldLockFill } from "react-icons/bs";
 import { AiOutlineSwapRight } from "react-icons/ai";
 
+const LOGIN_URL = '/login';
 
 // for video <video src=(video) autoPlay muted loop></video>
 
 const Login = () => {
+    const { setAuth, persist, setPersist } = useAuth();
+
+    const navigateTo = useNavigate()
+    const location = useLocation();
+    const from = location.state?.from?.pathname || "/quiz";
+
+    const userRef = useRef();
+    const errRef = useRef();
+
 
     //UseState to hold inputs
     const [loginUserName, setLoginUserName] = useState('')
     const [loginPassword, setLoginPassword] = useState('')
-    const navigateTo = useNavigate()
+    const [errMsg, setErrMsg] = useState('')
+    
+
 
     //Message to the user 
     const[loginStatus, setLoginStatus] = useState('')
     const[statusHolder, setStatusHolder] = useState('message')
 
+    useEffect(() => {
+        if (loginStatus !== '') {
+            setStatusHolder('showMessage');
+            const timer = setTimeout(() => setStatusHolder('message'), 4000);
+            return () => clearTimeout(timer); // cleanup
+        }
+    }, [loginStatus]);
+
+    useEffect(()=> {
+        userRef.current.focus();
+    }, [])
+
+  
 
         //onClick we will get what the user has entered
-        const loginUser = (e)=>{
-
-            //prevent submitting 
+        const loginUser = async (e) => {
             e.preventDefault();
-
-            Axios.post('https://w1830501-finalyear-project-303a39317c7b.herokuapp.com/login', {
-                //creating variables to be sent to the server
-                LoginUserName: loginUserName,
-                LoginPassword: loginPassword
-            }).then((response)=>{
-                console.log()
-
-                if(response.data.message || loginUserName == '' || loginPassword == '' ) {
-                    //if credentials don't match 
-                    navigateTo('/') //the user navigates to the login page
-                    setLoginStatus("Credetentials don't exist!")
-                }
-                else {
-                    navigateTo('/quiz') //if login is succesfull and all match, it navigated to the dashboard
-                }
-            })
     
-        }
+            try {
+                const response = await axios.post(
+                    LOGIN_URL,
+                    {
+                        LoginUserName: loginUserName,
+                        LoginPassword: loginPassword
+                    }
+                );
 
-        useEffect(()=>{
-            if(loginStatus !== ''){
-                setStatusHolder('showMessage') //show message
-                setTimeout(() => {
-                    setStatusHolder('message') //hide it after 4 seconds
-                }, 4000);
+                console.log("LOGIN SUCCESS:", response.data); // ✅ Check this!
+    
+                // Check expected success structure
+                if (response?.data?.accessToken) {
+                    const accessToken = response.data.accessToken;
+                    const roles = response.data.roles;
+    
+                    setAuth({ 
+                        LoginUserName: loginUserName,  
+                        roles, 
+                        accessToken });
+                    setLoginUserName('');
+                    setLoginPassword('');
+                    //navigateTo(from, '/quiz'); //Redirect on success
+                    navigateTo(from, {replace: true });
+                } else {
+                    setLoginStatus('Invalid credentials');
+                }
+            } catch (err) {
+                if (!err?.response) {
+                    setErrMsg('No Server Response');
+                } else if (err.response.status === 400) {
+                    setErrMsg('Missing Username or Password');
+                } else if (err.response.status === 401) {
+                    setErrMsg('Unauthorized');
+                } else {
+                    setErrMsg('Login Failed');
+                }
+                // ✅ Only call focus if the ref exists
+                if (errRef.current) errRef.current.focus();
             }
-        }, [loginStatus])
+        };
 
-      
-
-
+    const togglePersist = () => {
+            setPersist(prev => !prev);
+        }
+    
+    useEffect(() => {
+            localStorage.setItem("persist", persist);
+        }, [persist])
+    
 
     return(
+        
     <div className='loginPage flex'>
         <div className='container flex'>
 
@@ -95,41 +140,71 @@ const Login = () => {
                     <h3>Welcome back</h3>
                 </div>
 
+                <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">
+                    {errMsg}
+                    </p>
 
-                <form className='form grid' >
+
+                <form className='form grid' onSubmit={loginUser} >
                     <span className={statusHolder}>{loginStatus}</span>
 
                     <div className="inputDiv">
                         <label htmlFor="username">Username</label>
                         <div className="input flex">
                         <FaUserShield className='icon'/>
-                        <input type="text" id='username' placeholder='Enter Username' onChange={(event)=>{
+                        <input 
+                        type="text" 
+                        id='username' 
+                        ref={userRef}
+                        autoComplete='off'
+                        placeholder='Enter Username' 
+                        onChange={(event)=>{
                             setLoginUserName(event.target.value)
-                        }}/>
+                        }}
+                        value={loginUserName}
+                        required  
+                        />
                         </div>
-
                     </div>
+
                     <div className="inputDiv">
                         <label htmlFor="password">Password</label>
                         <div className="input flex">
                         <BsFillShieldLockFill className='icon'/>
-                        <input type="text" id='password' placeholder='Enter Password' onChange={(event)=>{
+                        <input 
+                        type="password" 
+                        id='password' 
+                        placeholder='Enter Password' 
+                        onChange={(event)=>{
                             setLoginPassword(event.target.value)
-                        }}/>
+                        }}
+                        value={loginPassword}
+                        required
+                        />
                         </div>
-
                     </div>
 
-                    <button type='submit' className='btn flex' onClick={loginUser}>
+                    <button className='btn flex'>
                         <span>Login</span>
                         <AiOutlineSwapRight className='icon'/>
 
                     </button>
+                    <div className="persistCheck">
+                    <input
+                        type="checkbox"
+                        id="persist"
+                        onChange={togglePersist}
+                        checked={persist}
+                    />
+                    <label htmlFor="persist">Trust This Device</label>
+                   </div>
                
                     <span className='forgetPassword'>
                     <a href=''>Forgot your password? Click here</a>
 
                     </span>
+
+
                 </form>
             </div>
 
@@ -137,7 +212,9 @@ const Login = () => {
 
         </div>
     </div>
+
     )
+
 }
 
 export default Login;

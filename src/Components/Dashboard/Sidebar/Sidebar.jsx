@@ -4,15 +4,25 @@ import logo from '../../../LoginAssets/logo.png'
 import { navigationLinks } from '../../Data/Data';
 import { useContext } from 'react';
 import { SidebarContext } from '../Reducer/sidebarContext';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import useLogout from '../../../Hooks/useLogout';
 
 
 const Sidebar = ({ activeLinkIdx, setActiveLinkIdx }) => {
 
     const location = useLocation(); // Get the current path
+    const navigateTo = useNavigate();
     const [sidebarClass, setSidebarClass] = useState("");
     const { isSidebarOpen } = useContext(SidebarContext);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+    
+
+    const logout = useLogout();
+
+    const signOut = async () => {
+      await logout();
+      navigateTo('/')
+    }
 
     useEffect(() => {
         if(isSidebarOpen){
@@ -58,9 +68,9 @@ const Sidebar = ({ activeLinkIdx, setActiveLinkIdx }) => {
                   {isSettingsOpen && (
                     <ul className="nav-list">
                       <li className="nav-item">
-                        <Link to="/" className="nav-link">
-                          <span className="nav-link-text">Sign out</span>
-                        </Link>
+                        <div className="nav-link">
+                          <button onClick={signOut}>Sign out</button>
+                        </div>
                       </li>
                     </ul>
                   )}

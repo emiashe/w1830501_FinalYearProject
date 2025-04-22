@@ -14,7 +14,8 @@ export const navigationLinks = [
     { id: 4, title: 'Forum', image: <HiAcademicCap />, path: '/forumpage'  },
   /*   { id: 5, title: 'Cheatsheets', image: <HiAcademicCap />, path: '/news'  }, */
     { id: 6, title: 'Feedback/Support', image: <HiAcademicCap />, path: '/supportpage'  },
-    { id: 7, title: 'Settings', image: <HiAcademicCap />, path: '/news'  }
+    { id: 7, title: 'Admin Page', image: <HiAcademicCap />, path: '/adminpage'  },
+    { id: 8, title: 'Settings', image: <HiAcademicCap />, path: '/news'  }
 ];
 
 export const firstquizdata = [
@@ -118,29 +119,6 @@ export const forumPosts = [
 
   ];
 
-  export const projectsData = [
-    {
-      module: "Introduction to HTML/CSS",
-      level: "Beginner",
-      title: "Master the Foundations of Web Development",
-      description: "Learn how to use HTML & CSS — foundational technologies for creating beautiful and structured web pages.",
-      modulesCount: 5,
-    },
-    {
-      module: "CSS Basics",
-      level: "Beginner",
-      title: "CSS: Basics",
-      description: "Learn how to use CSS—a fundamental technology for styling and designing visually appealing web pages.",
-      modulesCount: 3,
-    },
-    {
-      module: "Introduction to JavaScript",
-      level: "Beginner",
-      title: "Introduction to JavaScript",
-      description: "Learn how to use JavaScript—a language that brings interactivity and functionality to your web pages.",
-      modulesCount: 4,
-    },
-  ];
 
   export const progressData = [
     { label: "Introduction to HTML/CSS", percentage: 100, color: "hsl(166, 52%, 55%)" },

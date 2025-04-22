@@ -62,3 +62,20 @@
     background: #FFEBEB;
     border-color: #FF4A4A;
 }
+.quiz-image {
+    max-width: 100%;
+    height: auto;
+    margin: 10px 0;
+    border-radius: 6px;
+  }
+
+  .quiz-question-block {
+    margin-bottom: 30px;
+  }
+  .quiz-results {
+    margin-top: 30px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #00d397;
+    text-align: center;
+  }
