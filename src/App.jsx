@@ -14,7 +14,7 @@ import CoursePreview from './Components/Courses/CoursePreview'
 import Lesson from './Components/Courses/CodeEditor/Lesson'
 import ContentTop from './Components/Dashboard/ContentTop/ContentTop'
 import AdminPage from './Components/Dashboard/Content/AdminPage/AdminPage'
-import RequireAuth from './Context/requireAuth'
+import RequireAuth from './Context/RequireAuth'
 import PersistLogin from './Context/PersistLogin'
 
 
