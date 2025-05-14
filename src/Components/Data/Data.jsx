@@ -1,11 +1,6 @@
 
 import { HiAcademicCap } from 'react-icons/hi';
-import question1 from './../../LoginAssets/question1.png';
-import question3 from './../../LoginAssets/question3.png';
-import github from './DataAssets/github.png';
-import html from './DataAssets/html.png';
-import css from './DataAssets/css.png';
-import javascript from './DataAssets/javascript.png';
+
 
 export const getNavigationLinks = (userRoles = []) => {
   const baseLinks = [
