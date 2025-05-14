@@ -29,7 +29,6 @@ const Output = ({ editorRef, expectedOutput = null, courseId }) => {
       if (expectedOutput?.trim() === cleanedOutput) {
         setSuccess(true);
 
-        console.log(" Calling /progress/complete with sectionId:", sectionId);
         // Mark progress as complete
         await axiosPrivate.post('/progress/complete', {
           sectionId: parseInt(sectionId),
@@ -57,13 +56,7 @@ const Output = ({ editorRef, expectedOutput = null, courseId }) => {
   
       if (nextId) {
         // There are still lessons remaining → navigate to course preview
-        navigate(`/coursepreview/${courseId}`, {
-          state: {
-            completedLesson: true,
-            nextSectionId: nextId,
-            timestamp: Date.now(), // helps ensure useEffect triggers
-          },
-        });
+        navigate(`/coursepreview/${courseId}`, { state: { completedLesson: true } });
       } else {
         // No more lessons → navigate to homescreen
         navigate('/homepage');

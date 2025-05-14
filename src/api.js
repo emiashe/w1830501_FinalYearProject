@@ -1,21 +1,19 @@
-//w1830501
-// API configuration for executing JavaScript code using Piston API
-
 import axios from "axios";
+
 
 const API = axios.create({
   baseURL: "https://emkc.org/api/v2/piston",
 });
 
-// Function to send code to the Piston API for execution
+// Function to execute JavaScript code using Piston API
 export const executeCode = async (sourceCode) => {
   try {
       const response = await API.post("/execute", {
-          language: "javascript",
-          version: "18.15.0",
+          language: "javascript", // Hardcoded language to JavaScript
+          version: "18.15.0", // Specify a stable JS version
           files: [
               {
-                  content: sourceCode,
+                  content: sourceCode, // User's input code
               },
           ],
       });
