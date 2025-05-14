@@ -381,3 +381,64 @@ img{
 .instructions > svg {
     margin-right: 0.25rem;
 }
+
+.credits {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    color: white;
+    font-size: 14px;
+    z-index: 1000;
+  }
+
+  .persistCheck {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .toggle-switch {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+  
+  .toggle-switch input {
+    display: none;
+  }
+  
+  .slider {
+    width: 40px;
+    height: 20px;
+    background-color: #ccc;
+    border-radius: 34px;
+    position: relative;
+    transition: background-color 0.2s;
+    margin-right: 10px;
+  }
+  
+  .slider::before {
+    content: "";
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: white;
+    top: 1px;
+    left: 1px;
+    transition: transform 0.2s;
+  }
+  
+  input:checked + .slider {
+    background-color: #4caf50;
+  }
+  
+  input:checked + .slider::before {
+    transform: translateX(20px);
+  }
+  
+  .label-text {
+    color: white; /* Or whatever fits your theme */
+    font-size: 14px;
+  }
+  
