@@ -1,56 +1,138 @@
 import { useState, useEffect } from "react";
 import useAxiosPrivate from "../Hooks/useAxiosPrivate";
-import { useNavigate, useLocation } from "react-router-dom";
-
 
 const Users = () => {
-    const [users, setUsers] = useState();
-    const axiosPrivate = useAxiosPrivate();
-    const navigateTo = useNavigate();
-    const location = useLocation();
+  const [users, setUsers] = useState([]);
+  const [form, setForm] = useState({ email: "", username: "", password: "", role: "User" });
+  const [editingId, setEditingId] = useState(null);
+  const axiosPrivate = useAxiosPrivate();
 
-    useEffect(() => {
-        let isMounted = true;
-        const controller = new AbortController();
+  // Fetch users
+  const fetchUsers = async () => {
+    try {
+      const res = await axiosPrivate.get("/users");
+      setUsers(res.data);
+    } catch (err) {
+      console.error("Error fetching users:", err);
+    }
+  };
 
-        const getUsers = async () => {
-            try {
-                const response = await axiosPrivate.get('/users', {
-                    signal: controller.signal
-                });
-                console.log(response.data);
-                isMounted && setUsers(response.data);
-            } catch (err) {
-                if (err.name === 'CanceledError') {
-                    console.log("Request canceled:", err.message);
-                } else {
-                    console.error(err);
-                    navigateTo('/', { state: { from: location }, replace: true });
-                }
-            }
-        }
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
-        getUsers();
+  // Handle input change
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
-        return () => {
-            isMounted = false;
-            controller.abort();
-        }
-    }, [])
+  // Add or update user
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    return (
-        <article>
-            <h2>Users List</h2>
-            {users?.length
-                ? (
-                    <ul>
-                        {users.map((user, i) => <li key={i}>{user?.username}</li>)}
-                    </ul>
-                ) : <p>No users to display</p>
-            }
-            
-        </article>
-    );
+    try {
+      if (editingId) {
+        await axiosPrivate.put("/users", { ...form, id: editingId });
+      } else {
+        await axiosPrivate.post("/users", form);
+      }
+
+      setForm({ email: "", username: "", password: "", role: "User" });
+      setEditingId(null);
+      fetchUsers();
+    } catch (err) {
+      console.error("Error saving user:", err);
+    }
+  };
+
+  // Set user in edit mode
+  const handleEdit = (user) => {
+    setForm({
+      email: user.email,
+      username: user.username,
+      password: "", // leave blank
+      role: user.role,
+    });
+    setEditingId(user.id);
+  };
+
+  // Delete user
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this user?")) return;
+
+    try {
+      await axiosPrivate.delete("/users", { data: { id } });
+      fetchUsers();
+    } catch (err) {
+      console.error("Error deleting user:", err);
+    }
+  };
+
+  return (
+    <div>
+      <h2>Users</h2>
+      <table className="user-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Email</th>
+            <th>Username</th>
+            <th>Role</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {users.map((u) => (
+            <tr key={u.id}>
+              <td>{u.id}</td>
+              <td>{u.email}</td>
+              <td>{u.username}</td>
+              <td>{u.role}</td>
+              <td className="action-buttons">
+                <button className="btn edit" onClick={() => handleEdit(u)}>Edit</button>
+                <button className="btn delete" onClick={() => handleDelete(u.id)}>Delete</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <div className="add-user-form">
+        <h3>{editingId ? "Edit User" : "Add New User"}</h3>
+        <form onSubmit={handleSubmit}>
+          <input
+            name="email"
+            type="email"
+            placeholder="Email"
+            value={form.email}
+            onChange={handleChange}
+            required
+          />
+          <input
+            name="username"
+            placeholder="Username"
+            value={form.username}
+            onChange={handleChange}
+            required
+          />
+          <input
+            name="password"
+            type="password"
+            placeholder={editingId ? "New Password (optional)" : "Password"}
+            value={form.password}
+            onChange={handleChange}
+            required={!editingId}
+          />
+          <select name="role" value={form.role} onChange={handleChange}>
+            <option value="User">User</option>
+            <option value="Editor">Editor</option>
+            <option value="Admin">Admin</option>
+          </select>
+          <button type="submit">{editingId ? "Update User" : "Create User"}</button>
+        </form>
+      </div>
+    </div>
+  );
 };
 
 export default Users;
