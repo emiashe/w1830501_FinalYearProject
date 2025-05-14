@@ -57,7 +57,13 @@ const Output = ({ editorRef, expectedOutput = null, courseId }) => {
   
       if (nextId) {
         // There are still lessons remaining → navigate to course preview
-        navigate(`/coursepreview/${courseId}`, { state: { completedLesson: true } });
+        navigate(`/coursepreview/${courseId}`, {
+          state: {
+            completedLesson: true,
+            nextSectionId: nextId,
+            timestamp: Date.now(), // helps ensure useEffect triggers
+          },
+        });
       } else {
         // No more lessons → navigate to homescreen
         navigate('/homepage');
