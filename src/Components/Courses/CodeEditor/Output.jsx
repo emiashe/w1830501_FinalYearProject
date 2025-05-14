@@ -29,6 +29,7 @@ const Output = ({ editorRef, expectedOutput = null, courseId }) => {
       if (expectedOutput?.trim() === cleanedOutput) {
         setSuccess(true);
 
+        console.log(" Calling /progress/complete with sectionId:", sectionId);
         // Mark progress as complete
         await axiosPrivate.post('/progress/complete', {
           sectionId: parseInt(sectionId),
