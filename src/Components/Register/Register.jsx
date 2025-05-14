@@ -144,8 +144,8 @@ const Register = () => {
                 
 
                 <div className='textDiv'>
-                    <h2 className='title'>Info about the website</h2>
-                    <p>More Info</p>
+                <h2 className='title'>Build the Web, One Tag at a Time.</h2>
+                <p>Learn HTML, CSS, and JavaScript by doing — right in your browser.</p>
                 </div>
 
                 <div className='footerDiv flex'>
@@ -342,6 +342,7 @@ const Register = () => {
 
 
         </div>
+        <p class="credits">By Emina Asherbekova (w1830501)</p>
     </div>
   
     )

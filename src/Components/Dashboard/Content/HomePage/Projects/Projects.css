@@ -131,3 +131,51 @@
 }
 
 
+
+.flash-message {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 12px 18px;
+  margin: 20px auto;
+  width: fit-content;
+  border-radius: 8px;
+  font-weight: bold;
+  text-align: center;
+  animation: fadeOut 4s ease-out forwards;
+}
+
+@keyframes fadeOut {
+  0%, 80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+
+.archived-label {
+  font-size: 14px;
+  color: #aaa;
+  font-style: italic;
+  margin-top: 10px;
+}
+
+.btn-wrapper {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.enroll-btn {
+  padding: 8px 16px;
+  font-size: 14px;
+  border: none;
+  background-color: var(--primaryColor);
+  color: white;
+  border-radius: 20px;
+  cursor: pointer;
+  float: right;
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.enroll-btn:hover {
+  background-color: #218c74;
+}
+

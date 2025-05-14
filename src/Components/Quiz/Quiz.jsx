@@ -1,88 +1,136 @@
-import React, { useState, useRef } from "react"
-import './Quiz.css'
-import {Link, useNavigate} from 'react-router-dom'
-import { firstquizdata } from './../Data/Data'
+import React, { useEffect, useState, useRef } from "react";
+import { useNavigate } from 'react-router-dom';
+import './Quiz.css';
+import useAxiosPrivate from "../../Hooks/useAxiosPrivate";
 
 const Quiz = () => {
+  const [topic, setTopic] = useState(null); // 'html' or 'javascript'
+  const [questions, setQuestions] = useState([]);
+  const [index, setIndex] = useState(0);
+  const [score, setScore] = useState(0);
+  const [result, setResult] = useState(false);
+  const [lock, setLock] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-    let [index, setIndex] = useState(0);
-    let [question, setQuestion] = useState(firstquizdata[index]);
-    let [lock, setLock] = useState(false);
-    let [score, setScore] = useState(0);
-    let [result, setResult] = useState(false)
+  const axiosPrivate = useAxiosPrivate();
+  const navigate = useNavigate();
 
-    let Option1 = useRef(null);
-    let Option2 = useRef(null);
-    let Option3 = useRef(null);
-    let Option4 = useRef(null);
+  const optionRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
 
-    let option_array = [Option1, Option2, Option3, Option4];
+  // Step 1: Fetch quiz questions
+  useEffect(() => {
+    if (!topic) return;
 
+    const fetchQuiz = async () => {
+      setLoading(true);
+      try {
+        const res = await axiosPrivate.get(`/onboardingquiz/topic/${topic}`);
+        setQuestions(res.data.questions);
+      } catch (err) {
+        console.error("Failed to fetch quiz:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    fetchQuiz();
+  }, [topic]);
 
+  const checkAnswer = (e, selected) => {
+    if (lock) return;
 
-    const checkAnswer = (e, answer) => {
-        if (lock === false) {
-
-            if(question.answer===answer) {
-                e.target.classList.add("correct");
-                setLock(true);
-                setScore(prev=>prev+1)
-            }
-            else {
-                e.target.classList.add("wrong");
-                setLock(true);
-                option_array[question.answer-1].current.classList.add("correct");
-            }
-
-        }
+    const correct = questions[index].correct_option;
+    if (selected === correct) {
+      e.target.classList.add("correct");
+      setScore((prev) => prev + 1);
+    } else {
+      e.target.classList.add("wrong");
+      optionRefs[correct - 1].current.classList.add("correct");
     }
+    setLock(true);
+  };
 
-    const next = () => {
-        if (lock===true) {
-            if (index === firstquizdata.length -1) {
-                setResult(true);
-                return 0;
-            }
-            setIndex(++index);
-            setQuestion(firstquizdata[index]);
-            setLock(false);
-            option_array.map((option) => {
-                option.current.classList.remove("wrong");
-                option.current.classList.remove("correct");
-                return null;
-            })
-        }
-
+  const next = () => {
+    if (!lock) return;
+    if (index === questions.length - 1) {
+      setResult(true);
+    } else {
+      setIndex((prev) => prev + 1);
+      optionRefs.forEach(ref => {
+        ref.current.classList.remove("correct", "wrong");
+      });
+      setLock(false);
     }
+  };
 
+  const handleSubmit = async () => {
+    try {
+      const res = await axiosPrivate.post("/onboardingquiz/submit", {
+        topic,
+        score
+      });
 
+      // Quiz complete → user is now enrolled
+      navigate('/homepage');
+    } catch (err) {
+      console.error("Quiz submit failed:", err);
+      alert("Something went wrong!");
+    }
+  };
 
+  if (!topic) {
     return (
       <div className="quiz-container">
-        <h1>Quiz App</h1>
-        <hr />
-        {result?<></>:<>
-        <h2>{index+1}. {question.question}</h2>
-        <img src={question.image}/>
-         <ul>
-            <li ref={Option1} onClick={(e)=>{checkAnswer(e,1)}}>{question.option1}</li>
-            <li ref={Option2} onClick={(e)=>{checkAnswer(e,2)}}>{question.option2}</li>
-            <li ref={Option3} onClick={(e)=>{checkAnswer(e,3)}}>{question.option3}</li>
-            <li ref={Option4} onClick={(e)=>{checkAnswer(e,4)}}>{question.option4}</li>
-         </ul>
-         <button onClick={next}>Next</button>
-         <div className="index">{index+1} if {firstquizdata.length} questions</div>
-         </>}
-         {result?<><h2>Your Score: {score} out of {firstquizdata.length}</h2>
-         <Link to={'/homepage'}>
-         <button>Start learning</button>
-         </Link>
-         </>:<></>}
-    
+        <h1>Choose a Quiz Topic</h1>
+        <button onClick={() => setTopic("html")}>HTML Quiz</button>
+        <button onClick={() => setTopic("javascript")}>JavaScript Quiz</button>
       </div>
-      
-    )
+    );
+  }
+
+  if (loading) return <div className="quiz-container">Loading quiz...</div>;
+
+  if (!questions.length || !questions[index]) {
+    return <div className="quiz-container">Loading question...</div>;
   }
   
-  export default Quiz
+  const current = questions[index];
+
+  return (
+    <div className="quiz-container">
+      <h1>{topic.toUpperCase()} Quiz</h1>
+      <hr />
+
+      {!result ? (
+        <>
+          <div className="quiz-question-block">
+            <h2>{index + 1}. {current.question}</h2>
+          </div>
+          <ul>
+            {[1, 2, 3, 4].map((opt, i) => (
+              <li
+                key={i}
+                ref={optionRefs[i]}
+                onClick={(e) => checkAnswer(e, opt)}
+              >
+                {current[`option${opt}`]}
+              </li>
+            ))}
+          </ul>
+
+          <button onClick={next}>Next</button>
+          <div className="index">{index + 1} of {questions.length} questions</div>
+        </>
+      ) : (
+        <>
+          <div className="quiz-results">
+            <p>✅ You scored {score} out of {questions.length}</p>
+          </div>
+          <button onClick={handleSubmit}>Finish & See My Courses</button>
+        </>
+      )}
+    </div>
+  );
+};
+
+export default Quiz;

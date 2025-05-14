@@ -1,16 +1,16 @@
+//w1830501
+// Admin page component that renders the user management interface
 
+import './AdminPage.css';
 import Users from '../../../../Users/Users';
 
 const AdminPage = () => {
-    return (
-        <section>
-            <h1>Admins Page</h1>
-            <br />
-            <Users />
-        
-            <br />
-        </section>
-    )
-}
+  return (
+    <section className="admin-container">
+      <h1>User Management</h1>
+      <Users />
+    </section>
+  );
+};
 
-export default AdminPage
+export default AdminPage;

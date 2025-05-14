@@ -1,33 +1,55 @@
-import React from "react";
+//w1830501
+// Lists support articles and navigates to individual articles when clicked
+
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import useAxiosPrivate from '../../../../Hooks/useAxiosPrivate';
 import "./SupportPage.css";
-import { supportOptions } from './../../../Data/Data'
 
 const SupportPage = () => {
-    return (
-      
-                   
-        <div className="support-container">
-        <div className="support-header">
-          <h1>How can we help you?</h1>
-          <div className="search-bar">
-            <input type="text" placeholder="Enter your search term" />
-            <button>
-              <span role="img" aria-label="search">🔍</span>
-            </button>
-          </div>
-        </div>
-        <div className="support-options">
-          {supportOptions.map((option, index) => (
-            <div className="support-box" key={index}>
-              <div className="support-icon">{option.icon}</div>
-              <h2>{option.title}</h2>
-              <p>{option.description}</p>
-            </div>
-          ))}
-        </div>
+  const [articles, setArticles] = useState([]);
+  const [search, setSearch] = useState('');
+  const axiosPrivate = useAxiosPrivate();
+  const navigate = useNavigate();
+
+  // Fetch articles based on search term
+  useEffect(() => {
+    const fetchArticles = async () => {
+      try {
+        const endpoint = search
+          ? `/support/search?q=${encodeURIComponent(search)}`
+          : '/support';
+        const res = await axiosPrivate.get(endpoint);
+        setArticles(res.data);
+      } catch (err) {
+        console.error("Failed to load support articles", err);
+      }
+    };
+    fetchArticles();
+  }, [search]);
+
+  return (
+    <div className="support-container">
+      <div className="support-header">
+        <h1>How can we help you?</h1>
       </div>
-      
-    )
-  }
-  
-  export default SupportPage
+
+      {/* Display list of articles */}
+      <div className="support-options">
+        {articles.map(article => (
+          <li
+            key={article.id}
+            className="support-box"
+            onClick={() => navigate(`/support/${article.id}`)}
+          >
+            <div className="support-icon">{article.icon}</div>
+            <h2>{article.title}</h2>
+            <p>{article.description}</p>
+          </li>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default SupportPage;

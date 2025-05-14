@@ -1,3 +1,5 @@
+//w1830501
+// Axios configuration for public and private HTTP requests
 import axios from 'axios';
 const BASE_URL = 'https://w1830501-finalyear-project-303a39317c7b.herokuapp.com'
 
