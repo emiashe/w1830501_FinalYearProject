@@ -49,7 +49,7 @@ const CoursePreview = () => {
     };
 
     fetchCourse();
-  }, [id]);
+  }, [id, completedLesson]);
 
   const handleStartCourse = async () => {
     try {
