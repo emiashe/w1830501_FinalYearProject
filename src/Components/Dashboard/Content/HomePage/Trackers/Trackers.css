@@ -1,72 +1,148 @@
-/*w1830501*/
-/* Shared styles for tracker cards showing progress or current lessons */
-
-.tracker-box {
-  background-color: #1c1c28;
-  color: white;
+.circletracker-card {
+  background: #1c1c28; /* Match the dark background */
   border-radius: 12px;
   padding: 20px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
-  width: 100%;
+  color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.circletracker-header {
+  margin-bottom: 20px;
+}
+
+.circletracker-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.circletracker-circle-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 200px;
+  height: 200px;
+  margin: 20px 0; /* Adds spacing between the circle and details */
+}
+
+.circletracker-circle {
+  position: relative;
+  width: 200px; /* Adjust size of the circle */
+  height: 200px;
+  border-radius: 50%;
+  background: conic-gradient( hsl(166, 52%, 55%), #333 50% 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.circletracker-percentage {
+  position: absolute;
+  font-size: 2rem;
+  font-weight: bold;
+  color: white;
+  text-align: center;
+}
+
+.circletracker-details {
+  font-size: 0.9rem;
+  color: #d1d5db;
+}
+
+
+.tracker-card {
+  background: #1c1c28;
+  border-radius: 12px;
+  padding: 20px;
+  color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tracker-header {
+  margin-bottom: 20px;
 }
 
 .tracker-title {
   font-size: 1.25rem;
   font-weight: bold;
-  margin-bottom: 16px;
+}
+
+
+
+
+
+
+.progress-item {
+  margin-bottom: 10px;
+}
+
+.progress-label {
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.progress-bar {
+  height: 10px;
+  background: #333;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 5px;
+}
+
+.circular-tracker-container {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.circular-progress-item {
+  width: 100px;
+  text-align: center;
+  color: white;
 }
 
 .tracker-list {
   list-style: none;
-  padding: 0;
-  margin: 0;
+  padding-left: 0;
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .tracker-item {
-  margin-bottom: 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #2a2a3d;
+  padding: 10px 14px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.tracker-label {
-  font-weight: 600;
-  font-size: 0.95rem;
-  margin-bottom: 6px;
+.tracker-icon {
+  color: #00d397;
+  font-size: 1.2rem;
+  margin-top: 3px;
 }
 
-.tracker-course {
-  font-size: 0.9rem;
-  color: #aaa;
-  margin-top: 4px;
+.tracker-text {
+  display: flex;
+  flex-direction: column;
 }
 
-.tracker-bar {
-  background-color: #444;
-  border-radius: 6px;
-  height: 12px;
-  position: relative;
-  overflow: hidden;
-}
-
-.tracker-bar-fill {
-  background-color: var(--primaryColor);
-  height: 100%;
-  transition: width 0.4s ease-in-out;
-}
-
-.tracker-percent {
-  position: absolute;
-  right: 8px;
-  top: -20px;
+.tracker-meta {
   font-size: 0.8rem;
-  color: #ccc;
-}
-
-.clickable {
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.clickable:hover {
-  background-color: #2a2a3a;
-  border-radius: 6px;
-  padding: 6px;
+  color: #aaa;
+  margin-top: 2px;
 }

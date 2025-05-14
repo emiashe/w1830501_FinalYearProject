@@ -12,7 +12,7 @@ const CoursePreview = () => {
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
   const location = useLocation();
-  const { id } = useParams();
+  const { id } = useParams(); // courseId
 
   const [course, setCourse] = useState(null);
   const [modules, setModules] = useState([]);
@@ -21,8 +21,8 @@ const CoursePreview = () => {
   const [currentSectionId, setCurrentSectionId] = useState(null);
   const [currentModuleId, setCurrentModuleId] = useState(null);
   const completedLesson = location.state?.completedLesson;
+  
 
-  // Fetch course, modules, and user progress
   useEffect(() => {
     const fetchCourse = async () => {
       try {
@@ -36,6 +36,7 @@ const CoursePreview = () => {
         setCurrentSectionId(progressRes.data?.nextSection?.id || null);
         setCurrentModuleId(progressRes.data?.nextSection?.module_id || null);
 
+        // Load all sections by module
         const allSections = {};
         for (let mod of modulesRes.data) {
           const secRes = await axiosPrivate.get(`/courses/modules/${mod.id}/sections`);
@@ -50,12 +51,14 @@ const CoursePreview = () => {
     fetchCourse();
   }, [id]);
 
-  // Start course button → navigate to lesson
   const handleStartCourse = async () => {
     try {
       const res = await axiosPrivate.get(`/progress/course/${id}`);
       const nextId = res.data?.nextSection?.id;
-      if (nextId) navigate(`/lesson/${nextId}`);
+  
+      if (nextId) {
+        navigate(`/lesson/${nextId}`);
+      } 
     } catch (err) {
       console.error('Failed to fetch next section:', err);
       alert('Something went wrong. Please try again later.');
@@ -67,11 +70,16 @@ const CoursePreview = () => {
   if (!course) return <div>Loading course...</div>;
 
   return (
+
+    
     <div className="main-content">
       <ContentTop />
       {completedLesson && (
-        <div className="flash-message">Lesson completed successfully!</div>
+      <div className="flash-message">
+         Lesson completed successfully!
+      </div>
       )}
+
       <div className="page-container">
         <h1 className="page-title">{course.title}</h1>
         <p className="page-subtitle">{course.subtitle}</p>
@@ -93,8 +101,8 @@ const CoursePreview = () => {
 
         <div className="course-preview-container">
           <div className="course-preview-content">
-            <h2 className="course-title">{currentModule?.name || 'No module available'}</h2>
-            <p className="course-description">{currentModule?.description || 'No module available'}</p>
+          <h2 className="course-title">{currentModule?.name || 'No module available'}</h2>
+          <p className="course-description">{currentModule?.description || 'No module available'}</p>
 
             <div className="course-sections">
               {currentModuleId && sectionsByModule[currentModuleId]?.map((section, i) => (

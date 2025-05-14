@@ -1,40 +1,42 @@
-//w1830501
-// Tracker showing last visited sections for quick navigation
-
 import React, { useEffect, useState } from 'react';
 import './Trackers.css';
 import useAxiosPrivate from '../../../../../Hooks/useAxiosPrivate';
-import { useNavigate } from 'react-router-dom';
+import { FaCheckCircle } from 'react-icons/fa';
 
 const TrackerTwo = () => {
-  const [sections, setSections] = useState([]);
   const axiosPrivate = useAxiosPrivate();
-  const navigate = useNavigate();
+  const [completedLessons, setCompletedLessons] = useState([]);
 
-  // Fetch current sections user is on
   useEffect(() => {
-    const fetchSections = async () => {
+    const fetchCompleted = async () => {
       try {
-        const res = await axiosPrivate.get('/progress/current/all');
-        setSections(res.data);
+        const res = await axiosPrivate.get('/progress/completed');
+        setCompletedLessons(res.data);
       } catch (err) {
-        console.error("Failed to load current sections:", err);
+        console.error("Failed to load completed lessons", err);
       }
     };
-    fetchSections();
+    fetchCompleted();
   }, []);
 
   return (
-    <div className="tracker-box">
-      <h3 className="tracker-title">Current Lessons</h3>
-      <ul className="tracker-list">
-        {sections.map((section, i) => (
-          <li key={i} className="tracker-item clickable" onClick={() => navigate(`/lesson/${section.section_id}`)}>
-            <div className="tracker-label">{section.section_title}</div>
-            <div className="tracker-course">{section.course_title}</div>
-          </li>
-        ))}
-      </ul>
+    <div className="tracker-card">
+      <h2 className="tracker-title">✅ Completed Lessons</h2>
+      {completedLessons.length === 0 ? (
+        <p className="tracker-empty">You haven't completed any lessons yet.</p>
+      ) : (
+        <ul className="tracker-list">
+          {completedLessons.map((item, i) => (
+            <li key={i} className="tracker-item">
+              <FaCheckCircle className="tracker-icon" />
+              <div className="tracker-text">
+                <strong>{item.title}</strong>
+                <span className="tracker-meta">{item.module} — {item.course}</span>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
